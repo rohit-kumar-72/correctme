@@ -38,11 +38,12 @@ The project requires the following Python packages:
 - `requests` for making API calls to Azure OpenAI for grammar correction.
 - `pydub` for audio file manipulation (optional).
 - `os` and `time` for file and system handling.
+- `streamlit` for creating the web application interface.
 
 You can install all the dependencies using the following command:
 
 ```bash
-pip install moviepy speechrecognition gtts pydub requests python-dotenv
+pip install moviepy speechrecognition gtts pydub requests python-dotenv streamlit
 ```
 
 You will also need:
@@ -58,6 +59,7 @@ The script creates two directories to store intermediate and final files:
 - `test_audio/`: Stores audio files extracted from video segments and the generated corrected audio files.
 
 ![folder structure](image.png)
+
 ---
 
 ## Step-by-Step Process
@@ -87,16 +89,23 @@ The script creates two directories to store intermediate and final files:
    azure_openai_endpoint = 'your-azure-openai-endpoint'
    ```
 
-2. **Run the Script**:
-   To process your video, run the script as follows:
+2. **Run the Script with Streamlit**:
+   To launch the Streamlit application, run the following command in your terminal:
    
    ```bash
-   python script_name.py
+   streamlit run main.py
    ```
 
-   Ensure that the video file you want to process is placed in the working directory. Modify the `video_path` parameter in the script if needed.
+   Ensure that the video file you want to process is uploaded through the web interface provided by Streamlit.
 
-3. **Output**:
+3. **Updating Libraries**:
+   If you need to update your libraries to the latest versions, you can use the following command:
+
+   ```bash
+   pip install --upgrade moviepy speechrecognition gtts pydub requests python-dotenv streamlit
+   ```
+
+4. **Output**:
    The processed video will be saved as `final_video.mp4` in the current working directory.
 
 ---

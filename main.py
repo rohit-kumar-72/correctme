@@ -5,6 +5,7 @@ from gtts import gTTS
 import requests
 from pydub import AudioSegment
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
@@ -48,6 +49,8 @@ def process_segment(segment_filename):
             text = recognizer.recognize_google(audio_data)
     except Exception as e:
         print(f"Error transcribing {wav_audio_filename}: {e}")
+        st.error('Error in transcribing audio.. ⚠️')
+        st.stop()
         return segment_filename  # Skip processing if transcription fails
 
     # Correct grammar using OpenAI
@@ -65,7 +68,9 @@ def process_segment(segment_filename):
         response = requests.post(azure_openai_endpoint, headers=headers, json=data)
         corrected_text = response.json()['choices'][0]['message']['content'].strip()
     except Exception as e:
-        print(f"Error calling OpenAI API: {e}")
+        print(f"Error calling OpenAI API: {response.json()}")
+        st.error('Error in calling openai api .. ⚠️')
+        st.stop()
         return segment_filename  # Skip processing if API call fails
 
     # Generate TTS audio
@@ -109,5 +114,39 @@ def main(video_path):
             os.remove(seg)
 
 # Run the main function
-if __name__ == "__main__":
-    main("videoplayback.mp4")
+st.markdown('### Important instructions to use.')
+import streamlit as st
+
+st.markdown("""
+#### Upload Your Video
+
+- **Duration Limit**: Your video must be less than **2 minutes** to ensure faster processing. 
+  - *Note*: Videos longer than this may take more than **5 minutes** to process.
+
+#### Refresh Before Reupload
+
+- Before re-uploading any video, please **refresh the window** to ensure the application works correctly.
+
+#### Error Handling
+
+- If you encounter any errors, please **re-run the program** from the terminal to restart the process.
+""")
+
+st.markdown('### Upload your video 📽️ here...')
+st.info("upload video which is less than 2min for big video can take more than 5 min to convert.")
+sample_video = st.file_uploader("", ['mp4', 'mov', 'webm'], accept_multiple_files=False)
+
+if sample_video is None:
+    st.warning("No video file uploaded.")
+    st.stop()
+
+video_path='input_video.mp4'
+
+with open(video_path, 'wb') as f:
+    f.write(sample_video.read())
+
+with st.spinner("removing all grammaticla error from video please wait it may take time..."):
+    main(video_path)
+    
+st.markdown('### video processed successfully 🎊')
+st.video('final_video.mp4')
